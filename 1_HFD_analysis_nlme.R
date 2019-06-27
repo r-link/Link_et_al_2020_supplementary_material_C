@@ -11,9 +11,9 @@
 
 # Sections:
 # 1. Data loading and preparation
-# 2. Generate plot template
-# 3. nlme analysis 
-# 4. Model checking and evaluation
+# 2. Nonlinear regression analysis with nls/nlme
+# 3. Model checking and evaluation
+# 4. Results of the full model
 # 5. Export model objects
 
 # load packages ----------------------------------------------------------------
@@ -47,15 +47,17 @@ data <- read_csv("data/radial_profile_data_clean.csv") %>%
 data1 <- data %>% mutate(flux0 = flux,
                          flux = flux0 / sd(flux0)) 
 
-# 2. nonlinear regression analysis --------------------------------------------
+# 2. Nonlinear regression analysis with nls/nlme ------------------------------
 # define model equation and store as a formula object for convenience
 # cf. Eqn. 4 in the main text and Eqn. A.1 in the digital supplement
 # mu is retransformed from logit transformation, K and c are retransformed from log 
 # transformation within the equation
-beta1 <- flux ~ exp(log_c) *  reldepth ^ (exp(logit_mu) / (1 + exp(logit_mu)) * exp(log_k) - 1) *
-                         (1 - reldepth) ^ ((1 - exp(logit_mu) / (1 + exp(logit_mu))) * exp(log_k) - 1) / 
-              beta(exp(logit_mu) / (1 + exp(logit_mu)) * exp(log_k), (1 - exp(logit_mu) / (1 + exp(logit_mu))) *  exp(log_k))
-# note that calling the beta() function is permitted in model formulas for nls() and nlme()
+beta1 <- flux ~ exp(log_c) *
+                 dbeta(x = reldepth,  
+                       shape1 = exp(logit_mu) / (1 + exp(logit_mu)) * exp(log_k),        # alpha = mu * K
+                       shape2  = (1 - exp(logit_mu) / (1 + exp(logit_mu))) * exp(log_k)) # beta  = (1 - mu) * K
+# for simplicity and to reduce numerical problems, the density function of the beta distribution is 
+# called directly as dbeta() [function calls are allowed in the model equations in nls() and nlme()]
 
 # define nlme control parameters (increased iteration numbers)
 cont <- nlmeControl(maxIter = 9999,
@@ -152,10 +154,14 @@ points(data1$flux ~ predict(model_C), col = scales::alpha(1, .15), pch = 20)
 abline(0, 1, lty = 2)
 # the much better fit of the tree-level models is evident
 
-# 4. results of the full model ------------------------------------------------
+# 4. Results of the full model ------------------------------------------------
 # summary of full model
 summary(model_C)
-# low correlation in fixed effects, but (too) high correlation in random effects
+# model indicates significant height and growth effects on mu and significant
+# WD and height effects on K
+# however, large correlations in the random effects and the shrunk-to-zero species
+# level random effects for mu indicate that there might be some trouble with the model
+# - it could well be a false convergence 
 
 # calculate conditional pseudo-R^2
 var(avg1$pred3)/(var(avg1$pred3) + var(avg1$resid))
@@ -168,11 +174,13 @@ var(avg1$pred0)/(var(avg1$pred0) + var(avg1$flux - avg1$pred0))
 
 # visualize model predictions
 data1 %>%
+  # get predictions on different levels
   mutate(pred0 = predict(model_C, level = 0),
          pred1 = predict(model_C, level = 1),
          pred2 = predict(model_C, level = 2),
          pred3 = predict(model_C),
          resid = resid(model_C)) %>%
+  # plot for each stem separately with ggplot2
   ggplot(aes(x = depth, y = flux0)) +
   geom_point(aes(col = species), alpha = 0.4) + 
   geom_line(aes(y = pred2 * sd(flux0), col = species)) +
@@ -182,6 +190,6 @@ data1 %>%
   theme_minimal() + 
   theme(legend.position = "bottom") 
 
-# 4. Export model objects -----------------------------------------------------
+# 5. Export model objects -----------------------------------------------------
 #export output (for starting values for bayesian models)
 save(list = c("model_A", "model_B", "model_C"), file = "output/nlme_model_beta_ABC.RData")
