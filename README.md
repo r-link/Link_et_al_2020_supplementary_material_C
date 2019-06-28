@@ -6,9 +6,11 @@ Valverde Otarola, B Schuldt
 ## Description
 
 The present R project is part of the digital supplementary material of
-Link et al. (2019) and contains the Stan code for the three different
-hierarchical models considered in the paper (cf. Supplementary Material
-A for details about the model structure).
+Link et al. (2019) – *Tree height predicts the shape of radial sap flow
+profiles of Costa-Rican tropical dry forest tree species* – and contains
+the Stan code for the three different hierarchical models considered in
+the paper (cf. Supplementary Material A for details about the model
+structure).
 
 ## Structure
 

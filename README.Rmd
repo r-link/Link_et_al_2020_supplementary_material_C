@@ -1,6 +1,5 @@
 ---
 title: "Supplementary material C - data package and model code"
-subtitle: "Digital supplement for Link et al. 2019 - *Tree height predicts the shape of radial sap flow profiles of Costa-Rican tropical dry forest tree species*"
 author: RM Link, S Fuchs, D Arias Aguilar, C Leuschner M Castillo Ugalde, JC Valverde Otarola,  B Schuldt
 output: github_document
 ---
@@ -10,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Description
-The present R project is part of the digital supplementary material of Link et al. (2019) and contains the Stan code for the three different hierarchical models considered in the paper (cf. Supplementary Material A for details about the model structure).
+The present R project is part of the digital supplementary material of Link et al. (2019) -- *Tree height predicts the shape of radial sap flow profiles of Costa-Rican tropical dry forest tree species* -- and contains the Stan code for the three different hierarchical models considered in the paper (cf. Supplementary Material A for details about the model structure).
 
 ## Structure
 The Stan model code is stored in the `\stan` folder, while the code for the simple frequentist models used to generate starting values is stored in `1_HFD_analysis_nlme.R` and the code used to fit the models is found in `1_HFD_analysis_stan.R`. 
