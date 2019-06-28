@@ -51,7 +51,6 @@ data <- read_csv("data/radial_profile_data_clean.csv") %>%
          WD       = scale1(WD), # scale1 is a wrapper around scale that drops attributes (see utility functions)
          height   = scale1(height),
          ASI      = scale1(ASI),
-         depthpos = factor(depthpos),
          treedate = factor(paste(species, tree, date, sep = "/"))) 
 
 
@@ -63,7 +62,6 @@ data_fit <- data %$%
        J        = nlevels(treedate),    # number of tree:date combinations 
        K        = nlevels(tree),        # number of trees
        L        = nlevels(species),     # number of species
-       inst     = as.numeric(depthpos), # installation ID
        tree     = as.numeric(tree),     # tree ID
        treedate = as.numeric(treedate), # measurement days for each tree
        spec     = as.numeric(species),  # species ID
