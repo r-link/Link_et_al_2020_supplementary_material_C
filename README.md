@@ -14,7 +14,7 @@ structure).
 
 ## Structure
 
-The Stan model code is stored in the `\stan` folder, while the code for
+The Stan model code is stored in the `/stan` folder, while the code for
 the simple frequentist models used to generate starting values is stored
 in `1_HFD_analysis_nlme.R` and the code used to fit the models is found
 in `1_HFD_analysis_stan.R`.
@@ -30,7 +30,7 @@ The full project structure is as follows:
 /R              scripts that are sourced by the top level scripts
                 /R/get_starting_values_ABC.R   -- functions for randomized starting values based
                                                   on the maximum likelihood estimates
-                /R/utility_functionns.R        -- utility functions used in the top level scripts                                  
+                /R/utility_functions.R         -- utility functions used in the top level scripts                                  
 /stan           model code for the Stan models
                 /stan/model_A*       -- simple model without species level random effects and 
                                         parameter regressions
