@@ -77,8 +77,12 @@ save(list = c("data_fit", "data"),
      file = "output/stan_fit_data.RData")
 
 # 2. Fit model A --------------------------------------------------------------
+# BE CAREFUL
+# Model fitting takes a lot of time, and the exported model objects consume a lot 
+# of hard disk space. Run the following lines at own risk!
+
 # fit model with rstan
-(seed_A <- sample(1:1000000, 1)) # start from known random seed : 20168
+seed_A <- 20168 # predefined seed for reproducibility
 stan_fit_A <- stan(
                  # path to stan model code
                  file = "stan/model_A_spec_only.stan", 
@@ -98,11 +102,6 @@ stan_fit_A <- stan(
                  pars   = c("u_raw", "v_raw", "z_spec", "z_spec_1", "L_Omega_spec"),
                  # flag that declares that parameters named in "pars" have to be discarded
                  include = FALSE,
-                 # IMPORTANT - ADJUST PATH FOR STORAGE OF MCMC SAMPLES
-                 # (to large for project folder on my machine)
-                 sample_file = "/mnt/hgfs/D/HFD STAN model output/final_stan_model_output_A", 
-                 # should new samples be appended to the file specified above?
-                 append_samples = FALSE,
                  # print progress?
                  verbose = TRUE,
                  # control arguments for the sampling process 
@@ -112,13 +111,12 @@ stan_fit_A <- stan(
                  # how often shall the progress be printed?
                  refresh = 10)
 
-# export results -- ADJUST FILE PATH ACCORDING TO YOUR FILESYSTEM
-save(list = c("seed_A", "stan_fit_A"), 
-     file = "/mnt/hgfs/D/HFD STAN model output/final_stan_fit_A.RData")
+# export results 
+save(stan_fit_A, file = "output/stan/final_stan_fit_A.RData")
 
 
 # 3. Fit model B --------------------------------------------------------------
-(seed_B <- sample(1:1000000, 1)) # start from known random seed: 924805
+seed_B <- 924805 # predefined seed for reproducibility
 stan_fit_B <- stan(file = "stan/model_B_tree_RE.stan", 
                  data   = data_fit,
                  iter   = 10000, 
@@ -129,24 +127,19 @@ stan_fit_B <- stan(file = "stan/model_B_tree_RE.stan",
                  pars   = c("u_raw", "z_tree", "z_spec","z_tree_1", "z_spec_1",
                             "L_Omega_tree", "L_Omega_spec"),
                  include = FALSE,
-                 # IMPORTANT - ADJUST PATH FOR STORAGE OF MCMC SAMPLES
-                 # (to large for project folder on my machine)
-                 sample_file = "/mnt/hgfs/D/HFD STAN model output/final_stan_model_output_B",
-                 append_samples = FALSE,
                  verbose = TRUE,
                  control = list(adapt_delta    = 0.999,
                                 max_treedepth  = 15,
                                 stepsize       = 0.01),
                  refresh = 10)
 
-# export results -- ADJUST FILE PATH ACCORDING TO YOUR FILESYSTEM
-save(list = c("seed_B", "stan_fit_B"), 
-     file = "/mnt/hgfs/D/HFD STAN model output/final_stan_fit_B.RData")
+# export results
+save(stan_fit_B, file = "output/stan/final_stan_fit_B.RData")
 
 
 # 4. Fit model C --------------------------------------------------------------
 # fit model with rstan
-(seed_C <- sample(1:1000000, 1)) # start from known random seed : 658739
+seed_C <- 658739 # predefined seed for reproducibility
 stan_fit_C <- stan(file = "stan/model_C_tree_RE_and_fixed_effects.stan", 
                  data   = data_fit,
                  iter   = 10000, 
@@ -157,31 +150,28 @@ stan_fit_C <- stan(file = "stan/model_C_tree_RE_and_fixed_effects.stan",
                  pars   = c("u_raw", "z_tree", "z_spec","z_tree_1", "z_spec_1",
                             "L_Omega_tree", "L_Omega_spec"),
                  include = FALSE,
-                 # IMPORTANT - ADJUST PATH FOR STORAGE OF MCMC SAMPLES
-                 # (to large for project folder on my machine)
-                 sample_file = "/mnt/hgs/D/HFD STAN model output/final_stan_model_output_C",
-                 append_samples = FALSE, 
+                      append_samples = FALSE, 
                  verbose = TRUE,
                  control = list(adapt_delta    = 0.999,
                                 max_treedepth  = 15,
                                 stepsize       = 0.01),
                  refresh = 10)
 
-l
-# export results-- ADJUST FILE PATH ACCORDING TO YOUR FILESYSTEM
-save(list = c("seed_C", "stan_fit_C",), 
-     file = "/mnt/hgfs/D/HFD STAN model output/final_stan_fit_C.RData")
+
+# export results
+save(stan_fit_C, file = "output/stan/final_stan_fit_C.RData")
 
 
 # 5. Inspect model output ------------------------------------------------------
-# choose object to inspect
-stan_fit <- stan_fit_C # to avoid copying code, just enter the desired object here
+# the following section is identical for all models - to avoid redundancy,
+# just specify the model to inspect here:
+stan_fit <- stan_fit_C 
 
-# shiny stan model output (CAREFUL - TAKES VERY LONG)
+# shiny stan model output (BE CAREFUL - MAY TAKE VERY LONG)
 launch_shinystan(stan_fit)
 
 # summary of most important parameters
-# for model A and B
+# for model A and B (uncomment if necessary)
 # parnames <- c("mu0", "k0", "mult0", "sigma", "tau_u", "tau_v", "tau_w",
 #               "Omega_spec", "hier_scale")
 
@@ -214,18 +204,29 @@ fixef(model_C)
 plot(meanpars ~ fixef(model_C)); abline(0, 1, col = "grey")
 # --> estimated parameters are very similar to the maximum likelihood estimates
 #     but the confidence bounds are much wider (almost everything was "significant"
-#     in the nlme version of the model)
+#     in the nlme version of the model due to problems with the number of df for testing)
 
 
 # 6. Inspect variance decomposition  --------------------------------------------
 # variance components
 # a) mu
-(mu_vars <- extract_chain(stan_fit, "mu_vardecomp") %>%  colMeans) 
+(mu_vars <- extract_chain(stan_fit, "mu_vardecomp") %>%  
+   colMeans %>%
+   set_names(c("% var. explained by fixed effects", 
+               "% var. explained by species RE",
+               "% var. explained by tree RE"))) 
 # b) disp
-(k_vars  <- extract_chain(stan_fit, "k_vardecomp") %>%  colMeans) 
+(k_vars  <- extract_chain(stan_fit, "k_vardecomp") %>% 
+    colMeans%>%
+    set_names(c("% var. explained by fixed effects", 
+                "% var. explained by species RE",
+                "% var. explained by tree RE"))) 
 # c) pseudo-rsq
-(pseudo  <- extract_chain(stan_fit, "y_vardecomp") %>%  colMeans)
-
+(pseudo  <- extract_chain(stan_fit, "y_vardecomp") %>% 
+    colMeans %>%
+    set_names(c("% var. explained by tree level preds.", 
+                "% var. explained by day RE",
+                "% unexplained variance"))) 
 
 
 # 7. Plot expected profiles and confidence intervals----------------------------
@@ -254,17 +255,24 @@ ggplot(datap)+
   geom_ribbon(aes(x = depth, ymin = ymin_tree, ymax = ymax_tree, fill = tree, group = tree), alpha = 0.3)+
   geom_line(aes(x = depth, y = mean_tree, col = tree, group = tree))+
   facet_wrap(~species, scales = "free", ncol = 4) +
-  xlim(0,8)
+  xlim(0,8) +
+  theme_minimal() +
+  labs(x = "Sensor depth (cm)", y = "Sap flux per section")
 
 # ...individual level --------
 ggplot(datap)+
-  geom_point(aes(x = depth1, y = flux, col = species), alpha = 0.4) + 
-  geom_line(aes(x = depth1, y = mean, col = species, group = interaction(tree, date)), alpha = 0.6)+
-  geom_ribbon(aes(x = depth1, ymin = ymin_tree, ymax = ymax_tree, fill = species), alpha = 0.3)+
-  geom_line(aes(x = depth1, y = mean_tree, col = species, group = tree))+
-  facet_wrap(~paste(species, "-", tree), scales = "free") #+  xlim(0,1)
+  geom_point(aes(x = depth, y = flux, col = species), alpha = 0.4) + 
+  geom_line(aes(x = depth, y = mean, col = species, group = interaction(tree, date)), alpha = 0.6)+
+  geom_ribbon(aes(x = depth, ymin = ymin_tree, ymax = ymax_tree, fill = species), alpha = 0.3)+
+  geom_line(aes(x = depth, y = mean_tree, col = species, group = tree))+
+  facet_wrap(~paste(species, "-", tree), scales = "free") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(x = "Sensor depth (cm)", y = "Sap flux per section")
+
 
 # ...residual diagnostic plots -------
+# residuals vs. fitted
 datap %>% ggplot(aes(x = mean)) +
   geom_pointrange(aes(y = flux - mean,
                       ymin = flux - ymin,
@@ -272,22 +280,14 @@ datap %>% ggplot(aes(x = mean)) +
                   alpha = 0.2) +
   geom_hline(aes(yintercept = 0), lty = 2) +
   geom_smooth(aes(y = flux - mean), se = F)
+# some abberant measurement days produce outliers, but other than that
+# the data are well covered
 
-# corrected pseudo r-squared
-ymat <- matrix(rep(data$flux, nrow(EP)), nrow = nrow(EP), byrow = TRUE)
-# day-level predictions:
-resmat3 <- ymat - EP
-(RSq3 <- 1 - mean(apply(resmat3, 1, var))/var(data$flux))
-# tree-level predictions
-resmat2 <- ymat - EP_tree
-(RSq2 <- 1 - mean(apply(resmat2, 1, var))/var(data$flux))
-
-
-# observed vs predicted
+# predicted vs. observed values
 datap %>% ggplot(aes(x = flux)) +
   geom_pointrange(aes(y = mean, ymin = ymin, ymax = ymax),
                   alpha = 0.2) +
   geom_abline(col = 2)  + 
-  scale_x_sqrt() +
-  scale_y_sqrt() +
-  coord_flip()
+  coord_flip() +
+  theme_minimal() +
+  labs(y = "Observed SFS", x = "Predicted SFS")
