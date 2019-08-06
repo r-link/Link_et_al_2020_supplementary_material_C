@@ -14,7 +14,7 @@ Detailed information about the sap flow meausrements measurement can be found in
 
 | Variable | Unit | Example | Explanation |
 |----------|------|---------|-------------|
-|species   | -    | *Tabebuia impetiginosa* | Tree species|
+|species   | -    | *Handroanthus impetiginosus* | Tree species|
 |tree      | -    | H_BS2_01_03 | Tree ID (Site_Plot_Subplot_StemNo)|
 |campaign  | -    | 1 | Measurement campaign (numbered in increasing order) - only 10 trees could be measured at a time due to the number of available sensors and batteries |
 |date      |yyyy-mm-dd | 2015-10-08 | Measurement day (data are aggregated to daily averages to average out diurnal changes) |
