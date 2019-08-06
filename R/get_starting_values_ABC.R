@@ -254,7 +254,7 @@ u_raw <- u/sd(u)
 hier_scale <- 1
 
 # create list of starting values for models with QR & cholesky decomposition
-start_B  <- list(theta_mu = theta_mu, 
+start_C  <- list(theta_mu = theta_mu, 
                  theta_k  = theta_k,
                  mult0_sc = mult0_sc, 
                  sigma_sc = sigma_sc, 
