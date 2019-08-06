@@ -72,9 +72,6 @@ data_fit <- data %$%
 # load script with function for randomized starting values
 source("R/get_starting_values_ABC.R")
 
-# export data used for model fitting
-save(list = c("data_fit", "data"), 
-     file = "output/stan_fit_data.RData")
 
 # 2. Fit model A --------------------------------------------------------------
 # BE CAREFUL
@@ -112,7 +109,7 @@ stan_fit_A <- stan(
                  refresh = 10)
 
 # export results 
-save(stan_fit_A, file = "output/stan/final_stan_fit_A.RData")
+save(stan_fit_A, file = "output/stan_fit_A.RData")
 
 
 # 3. Fit model B --------------------------------------------------------------
@@ -134,7 +131,7 @@ stan_fit_B <- stan(file = "stan/model_B_tree_RE.stan",
                  refresh = 10)
 
 # export results
-save(stan_fit_B, file = "output/stan/final_stan_fit_B.RData")
+save(stan_fit_B, file = "output/stan_fit_B.RData")
 
 
 # 4. Fit model C --------------------------------------------------------------
@@ -159,7 +156,7 @@ stan_fit_C <- stan(file = "stan/model_C_tree_RE_and_fixed_effects.stan",
 
 
 # export results
-save(stan_fit_C, file = "output/stan/final_stan_fit_C.RData")
+save(stan_fit_C, file = "output/stan_fit_C.RData")
 
 
 # 5. Inspect model output ------------------------------------------------------
