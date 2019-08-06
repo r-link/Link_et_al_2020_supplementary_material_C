@@ -157,20 +157,11 @@ abline(0, 1, lty = 2)
 # 4. Results of the full model ------------------------------------------------
 # summary of full model
 summary(model_C)
-# model indicates significant height and growth effects on mu and significant
-# WD and height effects on K
-# however, large correlations in the random effects and the shrunk-to-zero species
-# level random effects for mu indicate that there might be some trouble with the model
-# - it could well be a false convergence 
-
-# calculate conditional pseudo-R^2
-var(avg1$pred3)/(var(avg1$pred3) + var(avg1$resid))
-# calculate pseudo-R^2 on stem level
-var(avg1$pred2)/(var(avg1$pred2) + var(avg1$flux - avg1$pred2))
-# calculate spec-level pseudo-R^2
-var(avg1$pred1)/(var(avg1$pred1) + var(avg1$flux - avg1$pred1))
-# calculate marginal pseudo-R^2
-var(avg1$pred0)/(var(avg1$pred0) + var(avg1$flux - avg1$pred0))
+# The model indicates significant height and growth effects on mu and significant
+# WD and height effects on K.
+# However, large correlations in the random effects and the shrunk-to-zero species
+# level random effects for mu indicate that there might be some trouble with the model:
+# The output could well have arisen from a false convergence.
 
 # visualize model predictions
 data1 %>%
@@ -189,6 +180,7 @@ data1 %>%
   labs(x = "Distance from cambium (cm)", y = "Sap flux per section") +
   theme_minimal() + 
   theme(legend.position = "bottom") 
+# -- model fits the observed data very well
 
 # 5. Export model objects -----------------------------------------------------
 #export output (for starting values for bayesian models)
