@@ -1,5 +1,5 @@
 ---
-title: "Meta information for the dataset"
+title: "Meta data for the dataset"
 output: github_document
 ---
 

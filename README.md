@@ -1,7 +1,7 @@
 Supplementary material C - data package and model code
 ================
-RM Link, S Fuchs, D Arias Aguilar, C Leuschner M Castillo Ugalde, JC
-Valverde Otarola, B Schuldt
+R.M. Link, S. Fuchs, D. Arias Aguilar, C. Leuschner, M. Castillo Ugalde,
+J.C. Valverde Otarola, B. Schuldt
 
 ## Description
 
@@ -10,7 +10,11 @@ Link et al. (2019) – *Tree height predicts the shape of radial sap flow
 profiles of Costa-Rican tropical dry forest tree species* – and contains
 the Stan code for the three different hierarchical models considered in
 the paper (cf. Supplementary Material A for details about the model
-structure).
+structure). The present project is currently stored in a private
+repository on GitHub which will be made publicly available under the
+address
+<https://github.com/r-link/Link_et_al_2019_supplementary_material_C> as
+soon as the paper is published.
 
 ## Structure
 

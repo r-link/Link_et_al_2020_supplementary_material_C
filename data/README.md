@@ -1,4 +1,4 @@
-Meta information for the dataset
+Meta data for the dataset
 ================
 
 ## Information
