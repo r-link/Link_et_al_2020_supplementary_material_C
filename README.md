@@ -10,11 +10,8 @@ Link et al. (2020) – *Tree height predicts the shape of radial sap flow
 profiles of Costa-Rican tropical dry forest tree species* – and contains
 the Stan code for the three different hierarchical models considered in
 the paper (cf. Supplementary Material A for details about the model
-structure). The present project is currently stored in a private
-repository on GitHub which will be made publicly available under the
-address
-<https://github.com/r-link/Link_et_al_2020_supplementary_material_C> as
-soon as the paper is published.
+structure). The article is available under the following link:
+<https://doi.org/10.1016/j.agrformet.2020.107913>.
 
 ## Structure
 
